@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Family Background • Horizon</title>
+  <link rel="stylesheet" href="base.css">
+  <style>
+    .family-entry {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2.5rem;
+      align-items: start;
+      padding: 3rem;
+      border-radius: 24px;
+      background: var(--ghost);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      margin-bottom: 2rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      animation: fadeUp 0.7s ease both;
+    }
+
+    .family-entry:hover {
+      border-color: rgba(0,200,255,0.25);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .family-entry:nth-child(even) { grid-template-columns: 1fr 280px; }
+    .family-entry:nth-child(even) .entry-img { order: 2; }
+    .family-entry:nth-child(even) .entry-text { order: 1; }
+
+    .family-entry:nth-child(2) { animation-delay: 0.1s; }
+    .family-entry:nth-child(3) { animation-delay: 0.2s; }
+    .family-entry:nth-child(4) { animation-delay: 0.3s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .entry-img {
+      width: 100%; aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+      transition: transform 0.4s;
+    }
+
+    .family-entry:hover .entry-img { transform: scale(1.02); }
+
+    .entry-text { }
+
+    .entry-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--electric); margin-bottom: 0.8rem;
+    }
+
+    .entry-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 900;
+      color: var(--white); margin-bottom: 1rem;
+    }
+
+    .entry-title em { font-style: italic; color: var(--sky); }
+
+    .entry-body {
+      font-size: 1rem; line-height: 1.85;
+      color: #94b4d4; font-weight: 300;
+    }
+
+    .album-cta {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      margin-top: 3rem;
+      padding: 0.85rem 2rem; border-radius: 9999px;
+      background: linear-gradient(135deg, var(--bright), var(--electric));
+      color: var(--white); text-decoration: none;
+      font-weight: 700; font-size: 0.88rem;
+      font-family: 'Space Mono', monospace; letter-spacing: 0.08em;
+      box-shadow: 0 8px 32px rgba(0,200,255,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .album-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,200,255,0.4); }
+
+    @media (max-width: 750px) {
+      .family-entry,
+      .family-entry:nth-child(even) {
+        grid-template-columns: 1fr;
+      }
+      .family-entry:nth-child(even) .entry-img,
+      .family-entry:nth-child(even) .entry-text { order: unset; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="Homepage.html">Home</a>
+    <a href="personal_album.html">Personal</a>
+    <a href="Collection.html">Collection</a>
+    <a href="Family-background.html" class="active">Family</a>
+    <a href="Education.html">Education</a>
+  </nav>
+
+  <div class="page-banner">
+    <div class="page-tag">03 / Chapter</div>
+    <h1>Family <em>Background</em></h1>
+  </div>
+
+  <div style="padding: 60px 6% 100px;">
+
+    <!-- Parents -->
+    <div class="family-entry">
+      <img src="Family/f2.jpg" class="entry-img" alt="Parents">
+      <div class="entry-text">
+        <div class="entry-tag">The Foundation</div>
+        <div class="entry-title">My <em>Parents</em></div>
+        <p class="entry-body">
+          Hi, good afternoon, this paragraph is for my parents. My parents are so generous to me and my sibling — they work so very hard that even in the pandemic, my mother went abroad to get higher pay. My father, even though he is 53 years old this year, still works without complaint. Their resilience and love are the foundation of everything I am.
+        </p>
+      </div>
+    </div>
+
+    <!-- Siblings -->
+    <div class="family-entry">
+      <img src="Family/f1.jpg" class="entry-img" alt="Siblings">
+      <div class="entry-text">
+        <div class="entry-tag">Growing Up Together</div>
+        <div class="entry-title">My <em>Siblings</em></div>
+        <p class="entry-body">
+          This paragraph is for my siblings. My sisters are very spoiled — my elder sister, who is 19 this year, has been spoiled rotten. My little sister is spoiled by my father. I am teaching my little sister to be different, because I see in her the potential to grow beyond those habits.
+        </p>
+      </div>
+    </div>
+
+    <!-- Myself -->
+    <div class="family-entry">
+      <img src="Family/f5.jpg" class="entry-img" alt="Me">
+      <div class="entry-text">
+        <div class="entry-tag">My Place in the Family</div>
+        <div class="entry-title"><em>Myself</em></div>
+        <p class="entry-body">
+          I guess I can say I'm average in terms of comparing myself to other people's siblings — yes, I'm kind of hard-headed, but naturally not spoiled. I dream of helping my parents after I start working, because of how hard-working they are. Their example drives me forward every single day.
+        </p>
+      </div>
+    </div>
+
+    <!-- Togetherness -->
+    <div class="family-entry">
+      <img src="Family/f4.jpg" class="entry-img" alt="Family Together">
+      <div class="entry-text">
+        <div class="entry-tag">Cherished Moments</div>
+        <div class="entry-title">Being <em>Together</em></div>
+        <p class="entry-body">
+          In this moment, everything feels wrapped in the gentle warmth of family — the kind where smiles come easily, laughter flows without effort, and even the smallest gestures are filled with love. It's not about where you are, but about the people beside you — the ones who turn ordinary days into treasured memories and make every place feel like home.
+        </p>
+      </div>
+    </div>
+
+    <a href="Family-album.html" class="album-cta">View Family Album →</a>
+
+  </div>
+
+</body>
+</html>

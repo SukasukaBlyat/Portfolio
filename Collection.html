@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collection • Horizon</title>
+  <link rel="stylesheet" href="base.css">
+  <style>
+    .hobbies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 2.5rem 0;
+    }
+
+    .hobby-pill {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 1rem 1.2rem;
+      background: var(--ghost);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      backdrop-filter: blur(12px);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .hobby-pill:hover {
+      border-color: rgba(0,200,255,0.3);
+      transform: translateX(4px);
+    }
+
+    .hobby-icon { font-size: 1.5rem; }
+
+    .hobby-name {
+      font-weight: 700; color: var(--white);
+      font-size: 0.9rem;
+    }
+
+    .hobby-sub {
+      font-size: 0.72rem; color: var(--muted);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .prose-card {
+      padding: 2.5rem;
+      background: var(--ghost);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      backdrop-filter: blur(16px);
+      margin-bottom: 2rem;
+    }
+
+    .album-preview {
+      display: flex; align-items: center; gap: 1.5rem;
+      padding: 1.5rem 2rem;
+      background: var(--ghost);
+      border: 1px solid rgba(0,200,255,0.2);
+      border-radius: 18px;
+      text-decoration: none; color: inherit;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .album-preview:hover {
+      border-color: rgba(0,200,255,0.5);
+      transform: translateY(-2px);
+    }
+
+    .preview-thumb {
+      width: 80px; height: 80px;
+      object-fit: cover; border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .preview-text .preview-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.68rem; color: var(--electric);
+      letter-spacing: 0.15em; text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .preview-text strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; color: var(--white);
+    }
+
+    .preview-arrow {
+      margin-left: auto;
+      color: var(--electric); font-size: 1.3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="Homepage.html">Home</a>
+    <a href="personal_album.html">Personal</a>
+    <a href="Collection.html" class="active">Collection</a>
+    <a href="Family-background.html">Family</a>
+    <a href="Education.html">Education</a>
+  </nav>
+
+  <div class="page-banner">
+    <div class="page-tag">02 / Chapter</div>
+    <h1>My Hobbies &amp; <em>Interests</em></h1>
+  </div>
+
+  <div class="content-wrap">
+
+    <div class="hobbies-grid">
+      <div class="hobby-pill">
+        <span class="hobby-icon">🎮</span>
+        <div>
+          <div class="hobby-name">Gaming</div>
+          <div class="hobby-sub">Strategy & Thinking</div>
+        </div>
+      </div>
+      <div class="hobby-pill">
+        <span class="hobby-icon">📺</span>
+        <div>
+          <div class="hobby-name">YouTube</div>
+          <div class="hobby-sub">Tutorials & Learning</div>
+        </div>
+      </div>
+      <div class="hobby-pill">
+        <span class="hobby-icon">💡</span>
+        <div>
+          <div class="hobby-name">Personal Projects</div>
+          <div class="hobby-sub">Self-imposed Challenges</div>
+        </div>
+      </div>
+      <div class="hobby-pill">
+        <span class="hobby-icon">📚</span>
+        <div>
+          <div class="hobby-name">Reading</div>
+          <div class="hobby-sub">Fantasy & Apocalyptic Fiction</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prose-card">
+      <p class="prose">
+        In my free time, I find joy in activities that keep both my mind and creativity engaged. I love playing games, not only for fun, but also for the way they challenge me to think strategically and adapt to different situations. I spend a lot of time watching YouTube tutorials, diving into new topics and skills that spark my curiosity — anything from coding tips to crafting techniques — and I make it a habit to turn what I've learned into a personal project or self-imposed challenge.
+      </p>
+      <br>
+      <p class="prose">
+        These challenges aren't just for fun; they're my way of pushing myself to grow, improving my problem-solving skills, and finding new, innovative solutions to whatever obstacles I encounter. Alongside this, I have a deep love for reading, especially fictional stories that pull me into imaginative worlds. My favorite genres are rich in fantasy, often set in apocalyptic scenarios where extraordinary events unfold and characters develop superpowers that reshape their destinies.
+      </p>
+      <br>
+      <p class="prose">
+        These stories fire up my imagination, inspire my own creativity, and make me think about how people — ordinary or otherwise — face challenges, adapt, and overcome. Together, these hobbies keep me curious, adaptable, and always ready to explore new ideas.
+      </p>
+    </div>
+
+    <a href="Collection-album.html" class="album-preview">
+      <img src="Collection/p1.jpg" class="preview-thumb" alt="Collection Album">
+      <div class="preview-text">
+        <div class="preview-label">Explore</div>
+        <strong>View Collection Album</strong>
+      </div>
+      <div class="preview-arrow">→</div>
+    </a>
+
+  </div>
+
+</body>
+</html>
