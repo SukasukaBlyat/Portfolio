@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper - Classic Puzzle Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght:700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ==================== CSS VARIABLES ==================== */
+        :root {
+            /* Light Mode */
+            --bg-primary: #f0f4ff;
+            --bg-secondary: #ffffff;
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --text-accent: #667eea;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-shadow: 0 20px 60px rgba(102, 126, 234, 0.15);
+            --tile-bg: #e2e8f0;
+            --tile-hover: #cbd5e0;
+            --tile-revealed: #f7fafc;
+            --tile-mine: #fc8181;
+            --tile-flag: #f6ad55;
+            --border-color: #e2e8f0;
+            --button-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --button-hover: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            --shape-color-1: rgba(102, 126, 234, 0.1);
+            --shape-color-2: rgba(118, 75, 162, 0.1);
+            --shape-color-3: rgba(96, 165, 250, 0.08);
+            --number-1: #3182ce;
+            --number-2: #38a169;
+            --number-3: #e53e3e;
+            --number-4: #805ad5;
+            --number-5: #d69e2e;
+            --number-6: #00b5d8;
+            --number-7: #d53f8c;
+            --number-8: #2d3748;
+        }
+
+        [data-theme="dark"] {
+            /* Dark Mode */
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-gradient-start: #4338ca;
+            --bg-gradient-end: #7c3aed;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-accent: #818cf8;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --tile-bg: #334155;
+            --tile-hover: #475569;
+            --tile-revealed: #1e293b;
+            --tile-mine: #ef4444;
+            --tile-flag: #f59e0b;
+            --border-color: #334155;
+            --button-bg: linear-gradient(135deg, #4338ca 0%, #7c3aed 100%);
+            --button-hover: linear-gradient(135deg, #7c3aed 0%, #4338ca 100%);
+            --shape-color-1: rgba(67, 56, 202, 0.15);
+            --shape-color-2: rgba(124, 58, 237, 0.15);
+            --shape-color-3: rgba(99, 102, 241, 0.12);
+            --number-1: #60a5fa;
+            --number-2: #4ade80;
+            --number-3: #f87171;
+            --number-4: #a78bfa;
+            --number-5: #fbbf24;
+            --number-6: #22d3ee;
+            --number-7: #f472b6;
+            --number-8: #e2e8f0;
+        }
+
+        /* ==================== GLOBAL STYLES ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            transition: background 0.4s ease, color 0.4s ease;
+        }
+
+        /* ==================== ANIMATED BACKGROUND ==================== */
+        .background-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            opacity: 0.6;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--shape-color-1), transparent);
+            border-radius: 50%;
+            top: -100px;
+            left: -100px;
+            animation-duration: 25s;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, var(--shape-color-2), transparent);
+            border-radius: 50%;
+            bottom: -150px;
+            right: -150px;
+            animation-duration: 30s;
+            animation-delay: -5s;
+        }
+
+        .shape-3 {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, var(--shape-color-3), transparent);
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            top: 50%;
+            right: 10%;
+            animation-duration: 20s;
+            animation-delay: -10s;
+        }
+
+        .shape-4 {
+            width: 250px;
+            height: 250px;
+            background: linear-gradient(45deg, var(--shape-color-1), transparent);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            bottom: 20%;
+            left: 15%;
+            animation-duration: 28s;
+            animation-delay: -15s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+            25% {
+                transform: translate(30px, -30px) rotate(90deg);
+            }
+            50% {
+                transform: translate(-20px, 20px) rotate(180deg);
+            }
+            75% {
+                transform: translate(20px, 30px) rotate(270deg);
+            }
+        }
+
+        /* ==================== CONTAINER ==================== */
+        .container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* ==================== GAME CARD ==================== */
+        .game-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            padding: 32px;
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid var(--border-color);
+            animation: slideIn 0.6s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==================== HEADER ==================== */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .game-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--button-bg);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: var(--tile-bg);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: 2px solid var(--border-color);
+        }
+
+        .theme-toggle::after {
+            content: '🌙';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 22px;
+            height: 22px;
+            background: var(--button-bg);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        [data-theme="dark"] .theme-toggle::after {
+            content: '☀️';
+            transform: translateX(30px);
+        }
+
+        /* ==================== GAME INFO ==================== */
+        .game-info {
+            display: flex;
+            justify-content: space-around;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .info-box {
+            flex: 1;
+            min-width: 120px;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            padding: 16px 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .info-box:hover {
+            transform: translateY(-2px);
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: #ffffff;
+        }
+
+        /* ==================== GAME BOARD ==================== */
+        .game-board {
+            display: grid;
+            gap: 2px;
+            background: var(--border-color);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            justify-content: center;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .tile {
+            width: 40px;
+            height: 40px;
+            background: var(--tile-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.15s ease;
+            user-select: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tile:hover:not(.revealed):not(.flagged) {
+            background: var(--tile-hover);
+            transform: scale(1.05);
+        }
+
+        .tile:hover::before {
+            opacity: 1;
+        }
+
+        .tile.revealed {
+            background: var(--tile-revealed);
+            cursor: default;
+            border-color: var(--border-color);
+            position: relative;
+        }
+
+        .tile.revealed::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--tile-bg);
+            border-radius: 6px;
+            animation: dropCover 0.4s ease forwards;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes dropCover {
+            0% {
+                transform: translateY(0) scaleY(1);
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(100%) scaleY(0.8);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(120%) scaleY(0.5);
+                opacity: 0;
+            }
+        }
+
+        .tile.flagged {
+            background: var(--tile-flag);
+            animation: flagWave 0.4s ease;
+        }
+
+        @keyframes flagWave {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            25% {
+                transform: rotate(-10deg);
+            }
+            75% {
+                transform: rotate(10deg);
+            }
+        }
+
+        .tile.mine {
+            background: var(--tile-mine);
+        }
+
+        /* Number Colors */
+        .tile[data-number="1"] { color: var(--number-1); }
+        .tile[data-number="2"] { color: var(--number-2); }
+        .tile[data-number="3"] { color: var(--number-3); }
+        .tile[data-number="4"] { color: var(--number-4); }
+        .tile[data-number="5"] { color: var(--number-5); }
+        .tile[data-number="6"] { color: var(--number-6); }
+        .tile[data-number="7"] { color: var(--number-7); }
+        .tile[data-number="8"] { color: var(--number-8); }
+
+        /* ==================== CONTROLS ==================== */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: var(--button-bg);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn:hover {
+            background: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .difficulty-selector {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-difficulty {
+            padding: 10px 20px;
+            background: var(--tile-bg);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-difficulty:hover {
+            border-color: var(--text-accent);
+            background: var(--tile-hover);
+        }
+
+        .btn-difficulty.active {
+            background: var(--button-bg);
+            color: white;
+            border-color: transparent;
+        }
+
+        /* ==================== MODAL ==================== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 24px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.4s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 12px;
+            background: var(--button-bg);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-message {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .modal-stats {
+            background: var(--tile-bg);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .modal-stat {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 8px 0;
+        }
+
+        /* ==================== SOUND TOGGLE ==================== */
+        .sound-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--tile-bg);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+        }
+
+        .sound-toggle:hover {
+            background: var(--tile-hover);
+        }
+
+        .sound-icon {
+            font-size: 1.2rem;
+        }
+
+        .sound-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        @media (max-width: 768px) {
+            .game-card {
+                padding: 20px;
+            }
+
+            .game-title {
+                font-size: 2rem;
+            }
+
+            .tile {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+
+            .info-value {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-title {
+                font-size: 1.5rem;
+            }
+
+            .tile {
+                width: 30px;
+                height: 30px;
+                font-size: 0.9rem;
+                border-radius: 4px;
+            }
+
+            .info-box {
+                min-width: 100px;
+                padding: 12px 16px;
+            }
+
+            .info-value {
+                font-size: 1.25rem;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+
+            .modal-icon {
+                font-size: 3rem;
+            }
+
+            .modal-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* ==================== ACCESSIBILITY ==================== */
+        .tile:focus {
+            outline: 3px solid var(--text-accent);
+            outline-offset: 2px;
+        }
+
+        .btn:focus,
+        .btn-difficulty:focus {
+            outline: 3px solid var(--text-accent);
+            outline-offset: 2px;
+        }
+
+        /* ==================== FOOTER ==================== */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: var(--text-accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="background-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+        <div class="shape shape-4"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="game-card">
+            <!-- Header -->
+            <div class="game-header">
+                <h1 class="game-title">MINESWEEPER</h1>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <div class="sound-toggle" id="soundToggle" role="button" aria-label="Toggle sound effects" tabindex="0">
+                        <span class="sound-icon">🔊</span>
+                        <span class="sound-label">Sound</span>
+                    </div>
+                    <div class="theme-toggle" id="themeToggle" role="button" aria-label="Toggle dark mode" tabindex="0"></div>
+                </div>
+            </div>
+
+            <!-- Game Info -->
+            <div class="game-info">
+                <div class="info-box">
+                    <div class="info-label">Time</div>
+                    <div class="info-value" id="timer">000</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Mines</div>
+                    <div class="info-value" id="mineCounter">010</div>
+                </div>
+                <div class="info-box">
+                    <div class="info-label">Status</div>
+                    <div class="info-value" id="gameStatus">😊</div>
+                </div>
+            </div>
+
+            <!-- Game Board -->
+            <div class="game-board" id="gameBoard"></div>
+
+            <!-- Controls -->
+            <div class="controls">
+                <button class="btn" id="restartBtn" aria-label="Restart game">
+                    🔄 Restart Game
+                </button>
+            </div>
+
+            <!-- Difficulty Selector -->
+            <div class="controls">
+                <div class="difficulty-selector">
+                    <button class="btn-difficulty active" data-difficulty="beginner" aria-label="Beginner difficulty">
+                        🟢 Beginner
+                    </button>
+                    <button class="btn-difficulty" data-difficulty="intermediate" aria-label="Intermediate difficulty">
+                        🟡 Intermediate
+                    </button>
+                    <button class="btn-difficulty" data-difficulty="expert" aria-label="Expert difficulty">
+                        🔴 Expert
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>Left-click to reveal • Right-click to flag • Double-click revealed numbers to chord • Clear all non-mine tiles to win!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="gameModal" role="dialog" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">🎉</div>
+            <h2 class="modal-title" id="modalTitle">You Win!</h2>
+            <p class="modal-message" id="modalMessage">Congratulations! You've cleared all the mines!</p>
+            <div class="modal-stats" id="modalStats"></div>
+            <button class="btn" id="modalBtn">Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== GAME STATE ====================
+        class MinesweeperGame {
+            constructor() {
+                this.difficulties = {
+                    beginner: { rows: 9, cols: 9, mines: 10 },
+                    intermediate: { rows: 16, cols: 16, mines: 40 },
+                    expert: { rows: 16, cols: 30, mines: 99 }
+                };
+
+                this.currentDifficulty = 'beginner';
+                this.config = this.difficulties[this.currentDifficulty];
+                this.board = [];
+                this.revealed = [];
+                this.flagged = [];
+                this.gameOver = false;
+                this.gameWon = false;
+                this.firstClick = true;
+                this.timer = 0;
+                this.timerInterval = null;
+                this.soundEnabled = true;
+                this.flagCount = 0;
+
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.loadTheme();
+                this.loadSoundPreference();
+                this.resetGame();
+            }
+
+            // ==================== EVENT LISTENERS ====================
+            setupEventListeners() {
+                // Theme toggle
+                const themeToggle = document.getElementById('themeToggle');
+                themeToggle.addEventListener('click', () => this.toggleTheme());
+                themeToggle.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') this.toggleTheme();
+                });
+
+                // Sound toggle
+                const soundToggle = document.getElementById('soundToggle');
+                soundToggle.addEventListener('click', () => this.toggleSound());
+                soundToggle.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') this.toggleSound();
+                });
+
+                // Restart button
+                document.getElementById('restartBtn').addEventListener('click', () => this.resetGame());
+
+                // Difficulty buttons
+                document.querySelectorAll('.btn-difficulty').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.changeDifficulty(e.target.dataset.difficulty));
+                });
+
+                // Modal button
+                document.getElementById('modalBtn').addEventListener('click', () => this.closeModal());
+
+                // Prevent context menu
+                document.addEventListener('contextmenu', (e) => {
+                    if (e.target.classList.contains('tile')) {
+                        e.preventDefault();
+                    }
+                });
+            }
+
+            // ==================== GAME LOGIC ====================
+            resetGame() {
+                this.gameOver = false;
+                this.gameWon = false;
+                this.firstClick = true;
+                this.timer = 0;
+                this.flagCount = 0;
+                clearInterval(this.timerInterval);
+                
+                this.config = this.difficulties[this.currentDifficulty];
+                this.board = this.createEmptyBoard();
+                this.revealed = this.createEmptyBoard();
+                this.flagged = this.createEmptyBoard();
+                
+                this.updateTimer();
+                this.updateMineCounter();
+                this.updateGameStatus('😊');
+                this.renderBoard();
+            }
+
+            createEmptyBoard() {
+                return Array(this.config.rows).fill().map(() => Array(this.config.cols).fill(0));
+            }
+
+            placeMines(excludeRow, excludeCol) {
+                let minesPlaced = 0;
+                
+                // Create exclusion zone around first click (3x3 area)
+                const exclusionZone = [];
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const newRow = excludeRow + i;
+                        const newCol = excludeCol + j;
+                        if (this.isValidCell(newRow, newCol)) {
+                            exclusionZone.push(`${newRow},${newCol}`);
+                        }
+                    }
+                }
+                
+                while (minesPlaced < this.config.mines) {
+                    const row = Math.floor(Math.random() * this.config.rows);
+                    const col = Math.floor(Math.random() * this.config.cols);
+                    const key = `${row},${col}`;
+                    
+                    // Don't place mine in exclusion zone or where mine already exists
+                    if (exclusionZone.includes(key) || this.board[row][col] === 'M') {
+                        continue;
+                    }
+                    
+                    this.board[row][col] = 'M';
+                    minesPlaced++;
+                }
+                
+                this.calculateNumbers();
+            }
+
+            calculateNumbers() {
+                for (let row = 0; row < this.config.rows; row++) {
+                    for (let col = 0; col < this.config.cols; col++) {
+                        if (this.board[row][col] !== 'M') {
+                            this.board[row][col] = this.countAdjacentMines(row, col);
+                        }
+                    }
+                }
+            }
+
+            countAdjacentMines(row, col) {
+                let count = 0;
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const newRow = row + i;
+                        const newCol = col + j;
+                        if (this.isValidCell(newRow, newCol) && this.board[newRow][newCol] === 'M') {
+                            count++;
+                        }
+                    }
+                }
+                return count;
+            }
+
+            isValidCell(row, col) {
+                return row >= 0 && row < this.config.rows && col >= 0 && col < this.config.cols;
+            }
+
+            revealCell(row, col) {
+                // Don't reveal if game over, already revealed, or flagged
+                if (this.gameOver || this.revealed[row][col] || this.flagged[row][col]) {
+                    return;
+                }
+
+                // First click - place mines avoiding this cell and ensure good opening
+                if (this.firstClick) {
+                    this.firstClick = false;
+                    this.placeMines(row, col);
+                    this.startTimer();
+                }
+
+                // Mark as revealed
+                this.revealed[row][col] = true;
+                const cell = this.board[row][col];
+
+                // Hit a mine - game over
+                if (cell === 'M') {
+                    this.handleGameOver();
+                    return;
+                }
+
+                this.playSound('reveal');
+
+                // If empty cell (0), flood fill reveal adjacent cells
+                if (cell === 0) {
+                    this.floodFill(row, col);
+                }
+
+                this.checkWinCondition();
+                this.renderBoard();
+            }
+
+            // Proper flood fill for empty cells (like authentic Minesweeper)
+            floodFill(row, col) {
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        if (i === 0 && j === 0) continue; // Skip center cell
+                        
+                        const newRow = row + i;
+                        const newCol = col + j;
+                        
+                        if (!this.isValidCell(newRow, newCol)) continue;
+                        if (this.revealed[newRow][newCol]) continue;
+                        if (this.flagged[newRow][newCol]) continue;
+                        
+                        // Reveal the adjacent cell
+                        this.revealed[newRow][newCol] = true;
+                        
+                        // If it's also empty, recursively flood fill
+                        if (this.board[newRow][newCol] === 0) {
+                            this.floodFill(newRow, newCol);
+                        }
+                    }
+                }
+            }
+
+            // Chord clicking - reveal all adjacent non-flagged cells if flags match the number
+            chordClick(row, col) {
+                if (this.gameOver || !this.revealed[row][col]) {
+                    return;
+                }
+
+                const cell = this.board[row][col];
+                
+                // Only works on numbered cells
+                if (cell === 0 || cell === 'M') {
+                    return;
+                }
+
+                // Count adjacent flags
+                let flagCount = 0;
+                for (let i = -1; i <= 1; i++) {
+                    for (let j = -1; j <= 1; j++) {
+                        const newRow = row + i;
+                        const newCol = col + j;
+                        if (this.isValidCell(newRow, newCol) && this.flagged[newRow][newCol]) {
+                            flagCount++;
+                        }
+                    }
+                }
+
+                // If flag count matches the number, reveal all non-flagged adjacent cells
+                if (flagCount === cell) {
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            const newRow = row + i;
+                            const newCol = col + j;
+                            if (this.isValidCell(newRow, newCol) && !this.flagged[newRow][newCol]) {
+                                this.revealCell(newRow, newCol);
+                            }
+                        }
+                    }
+                }
+            }
+
+            toggleFlag(row, col) {
+                if (this.gameOver || this.revealed[row][col]) {
+                    return;
+                }
+
+                this.flagged[row][col] = !this.flagged[row][col];
+                this.flagCount += this.flagged[row][col] ? 1 : -1;
+                this.updateMineCounter();
+                this.playSound('flag');
+                this.renderBoard();
+            }
+
+            checkWinCondition() {
+                let revealedCount = 0;
+                for (let row = 0; row < this.config.rows; row++) {
+                    for (let col = 0; col < this.config.cols; col++) {
+                        if (this.revealed[row][col]) {
+                            revealedCount++;
+                        }
+                    }
+                }
+
+                const totalCells = this.config.rows * this.config.cols;
+                if (revealedCount === totalCells - this.config.mines) {
+                    this.handleWin();
+                }
+            }
+
+            handleWin() {
+                this.gameOver = true;
+                this.gameWon = true;
+                clearInterval(this.timerInterval);
+                this.updateGameStatus('😎');
+                this.playSound('win');
+                this.showModal('win');
+            }
+
+            handleGameOver() {
+                this.gameOver = true;
+                clearInterval(this.timerInterval);
+                this.updateGameStatus('😵');
+                this.playSound('lose');
+                this.revealAllMines();
+                this.renderBoard();
+                setTimeout(() => this.showModal('lose'), 500);
+            }
+
+            revealAllMines() {
+                for (let row = 0; row < this.config.rows; row++) {
+                    for (let col = 0; col < this.config.cols; col++) {
+                        if (this.board[row][col] === 'M') {
+                            this.revealed[row][col] = true;
+                        }
+                    }
+                }
+            }
+
+            // ==================== RENDERING ====================
+            renderBoard() {
+                const gameBoard = document.getElementById('gameBoard');
+                gameBoard.innerHTML = '';
+                gameBoard.style.gridTemplateColumns = `repeat(${this.config.cols}, 1fr)`;
+                gameBoard.style.gridTemplateRows = `repeat(${this.config.rows}, 1fr)`;
+
+                for (let row = 0; row < this.config.rows; row++) {
+                    for (let col = 0; col < this.config.cols; col++) {
+                        const tile = document.createElement('div');
+                        tile.className = 'tile';
+                        tile.dataset.row = row;
+                        tile.dataset.col = col;
+                        tile.setAttribute('role', 'button');
+                        tile.setAttribute('aria-label', `Cell ${row + 1}, ${col + 1}`);
+                        tile.tabIndex = 0;
+
+                        if (this.revealed[row][col]) {
+                            tile.classList.add('revealed');
+                            const cell = this.board[row][col];
+                            
+                            if (cell === 'M') {
+                                tile.classList.add('mine');
+                                tile.textContent = '💣';
+                            } else if (cell > 0) {
+                                tile.textContent = cell;
+                                tile.dataset.number = cell;
+                            }
+                        } else if (this.flagged[row][col]) {
+                            tile.classList.add('flagged');
+                            tile.textContent = '🚩';
+                        }
+
+                        // Event listeners
+                        tile.addEventListener('click', () => this.revealCell(row, col));
+                        
+                        // Double-click for chord (reveal adjacent cells if flags match)
+                        tile.addEventListener('dblclick', () => this.chordClick(row, col));
+                        
+                        // Middle mouse button for chord
+                        tile.addEventListener('mousedown', (e) => {
+                            if (e.button === 1) { // Middle button
+                                e.preventDefault();
+                                this.chordClick(row, col);
+                            }
+                        });
+                        
+                        tile.addEventListener('contextmenu', (e) => {
+                            e.preventDefault();
+                            this.toggleFlag(row, col);
+                        });
+
+                        // Mobile long-press for flag
+                        let longPressTimer;
+                        let touchMoved = false;
+                        tile.addEventListener('touchstart', (e) => {
+                            touchMoved = false;
+                            longPressTimer = setTimeout(() => {
+                                if (!touchMoved) {
+                                    this.toggleFlag(row, col);
+                                }
+                            }, 500);
+                        });
+                        tile.addEventListener('touchmove', () => {
+                            touchMoved = true;
+                            clearTimeout(longPressTimer);
+                        });
+                        tile.addEventListener('touchend', () => {
+                            clearTimeout(longPressTimer);
+                        });
+
+                        // Keyboard support
+                        tile.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter') this.revealCell(row, col);
+                            if (e.key === 'f' || e.key === 'F') this.toggleFlag(row, col);
+                            if (e.key === ' ') {
+                                e.preventDefault();
+                                this.chordClick(row, col);
+                            }
+                        });
+
+                        gameBoard.appendChild(tile);
+                    }
+                }
+            }
+
+            // ==================== UI UPDATES ====================
+            startTimer() {
+                this.timerInterval = setInterval(() => {
+                    this.timer++;
+                    this.updateTimer();
+                }, 1000);
+            }
+
+            updateTimer() {
+                document.getElementById('timer').textContent = String(this.timer).padStart(3, '0');
+            }
+
+            updateMineCounter() {
+                const remaining = this.config.mines - this.flagCount;
+                document.getElementById('mineCounter').textContent = String(remaining).padStart(3, '0');
+            }
+
+            updateGameStatus(emoji) {
+                document.getElementById('gameStatus').textContent = emoji;
+            }
+
+            changeDifficulty(difficulty) {
+                this.currentDifficulty = difficulty;
+                
+                // Update button states
+                document.querySelectorAll('.btn-difficulty').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.difficulty === difficulty);
+                });
+                
+                this.resetGame();
+            }
+
+            // ==================== MODAL ====================
+            showModal(type) {
+                const modal = document.getElementById('gameModal');
+                const icon = document.getElementById('modalIcon');
+                const title = document.getElementById('modalTitle');
+                const message = document.getElementById('modalMessage');
+                const stats = document.getElementById('modalStats');
+
+                if (type === 'win') {
+                    icon.textContent = '🎉';
+                    title.textContent = 'Victory!';
+                    message.textContent = 'Congratulations! You cleared all the mines!';
+                } else {
+                    icon.textContent = '💥';
+                    title.textContent = 'Game Over!';
+                    message.textContent = 'You hit a mine! Better luck next time!';
+                }
+
+                stats.innerHTML = `
+                    <div class="modal-stat">Time: ${this.timer}s</div>
+                    <div class="modal-stat">Difficulty: ${this.currentDifficulty.charAt(0).toUpperCase() + this.currentDifficulty.slice(1)}</div>
+                `;
+
+                modal.classList.add('show');
+            }
+
+            closeModal() {
+                document.getElementById('gameModal').classList.remove('show');
+                this.resetGame();
+            }
+
+            // ==================== THEME & SOUND ====================
+            toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+            }
+
+            loadTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+
+            toggleSound() {
+                this.soundEnabled = !this.soundEnabled;
+                const soundToggle = document.getElementById('soundToggle');
+                const icon = soundToggle.querySelector('.sound-icon');
+                icon.textContent = this.soundEnabled ? '🔊' : '🔇';
+                localStorage.setItem('soundEnabled', this.soundEnabled);
+            }
+
+            loadSoundPreference() {
+                const savedSound = localStorage.getItem('soundEnabled');
+                if (savedSound !== null) {
+                    this.soundEnabled = savedSound === 'true';
+                    const icon = document.querySelector('.sound-icon');
+                    icon.textContent = this.soundEnabled ? '🔊' : '🔇';
+                }
+            }
+
+            playSound(type) {
+                if (!this.soundEnabled) return;
+
+                // Create simple beep sounds using Web Audio API
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+
+                switch (type) {
+                    case 'reveal':
+                        oscillator.frequency.value = 400;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        oscillator.stop(audioContext.currentTime + 0.05);
+                        break;
+                    case 'flag':
+                        oscillator.frequency.value = 600;
+                        gainNode.gain.value = 0.1;
+                        oscillator.start();
+                        oscillator.stop(audioContext.currentTime + 0.1);
+                        break;
+                    case 'win':
+                        // Play ascending notes
+                        [523, 659, 784].forEach((freq, i) => {
+                            const osc = audioContext.createOscillator();
+                            const gain = audioContext.createGain();
+                            osc.connect(gain);
+                            gain.connect(audioContext.destination);
+                            osc.frequency.value = freq;
+                            gain.gain.value = 0.1;
+                            osc.start(audioContext.currentTime + i * 0.1);
+                            osc.stop(audioContext.currentTime + i * 0.1 + 0.2);
+                        });
+                        break;
+                    case 'lose':
+                        oscillator.frequency.value = 200;
+                        gainNode.gain.value = 0.15;
+                        oscillator.start();
+                        oscillator.stop(audioContext.currentTime + 0.3);
+                        break;
+                }
+            }
+        }
+
+        // ==================== INITIALIZE GAME ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            new MinesweeperGame();
+        });
+    </script>
+</body>
+</html>
