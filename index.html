@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horizon • Homepage</title>
+  <link rel="stylesheet" href="base.css">
+  <style>
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 6%;
+      gap: 4rem;
+    }
+
+    .hero-label {
+      display: inline-block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--electric);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(4rem, 8vw, 7rem);
+      font-weight: 900; line-height: 0.95;
+      color: var(--white);
+    }
+
+    .hero-title span {
+      display: block; font-style: italic;
+      background: linear-gradient(90deg, var(--electric), var(--sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-quote {
+      margin-top: 2rem;
+      font-size: 1.05rem; font-weight: 300;
+      color: var(--muted); line-height: 1.8;
+      font-style: italic;
+      max-width: 420px;
+      padding-left: 1.2rem;
+      border-left: 2px solid var(--electric);
+    }
+
+    .hero-cta {
+      margin-top: 2.5rem;
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 0.85rem 2rem; border-radius: 9999px;
+      background: linear-gradient(135deg, var(--bright), var(--electric));
+      color: var(--white); text-decoration: none;
+      font-weight: 700; font-size: 0.9rem;
+      font-family: 'Space Mono', monospace; letter-spacing: 0.08em;
+      box-shadow: 0 8px 32px rgba(0,200,255,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(0,200,255,0.4); }
+
+    /* ── FLOATING PORTRAIT ── */
+    .hero-portrait {
+      position: relative;
+      display: flex; justify-content: center; align-items: center;
+    }
+
+    .portrait-ring {
+      width: 380px; height: 380px;
+      border-radius: 50%; position: relative;
+      animation: float 10s ease-in-out infinite;
+    }
+
+    .portrait-ring::before {
+      content: '';
+      position: absolute; inset: -14px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,200,255,0.3);
+      animation: spin 20s linear infinite;
+    }
+
+    .portrait-ring::after {
+      content: '';
+      position: absolute; inset: -28px;
+      border-radius: 50%;
+      border: 1px dashed rgba(0,200,255,0.15);
+      animation: spin 30s linear infinite reverse;
+    }
+
+    .portrait-img {
+      width: 380px; height: 380px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid rgba(0,200,255,0.25);
+      box-shadow:
+        0 0 80px rgba(0,200,255,0.3),
+        0 30px 80px rgba(0,0,0,0.5);
+    }
+
+    .portrait-badge {
+      position: absolute; bottom: 20px; right: -10px;
+      background: rgba(6,15,30,0.85);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      border-radius: 16px; padding: 1rem 1.4rem;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem; color: var(--sky);
+      letter-spacing: 0.05em;
+    }
+
+    .portrait-badge strong {
+      display: block; font-size: 1.4rem;
+      color: var(--white); margin-bottom: 0.1rem;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-22px); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── CHAPTERS ── */
+    .chapters {
+      padding: 100px 6%;
+    }
+
+    .chapters-header {
+      margin-bottom: 3rem;
+    }
+
+    .chapters-header .section-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: var(--electric); margin-bottom: 0.6rem;
+    }
+
+    .chapters-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900; color: var(--white);
+    }
+
+    .chapters-header h2 em { font-style: italic; color: var(--sky); }
+
+    .chapters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .chapter-card {
+      position: relative; border-radius: 24px; overflow: hidden;
+      background: var(--ghost);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(16px);
+      transition: transform 0.4s, box-shadow 0.4s;
+      cursor: pointer;
+    }
+
+    .chapter-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 30px 70px rgba(0,200,255,0.2);
+    }
+
+    .chapter-card a { display: block; text-decoration: none; color: inherit; }
+
+    .chapter-img {
+      width: 100%; height: 240px;
+      object-fit: cover;
+      transition: transform 0.5s;
+      display: block;
+    }
+
+    .chapter-card:hover .chapter-img { transform: scale(1.08); }
+
+    .chapter-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(6,15,30,0.9) 0%, transparent 50%);
+    }
+
+    .chapter-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 1.5rem 1.4rem;
+    }
+
+    .chapter-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem; color: var(--electric);
+      letter-spacing: 0.15em; margin-bottom: 0.3rem;
+    }
+
+    .chapter-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; font-weight: 900; color: var(--white);
+    }
+
+    .chapter-arrow {
+      position: absolute; top: 1.2rem; right: 1.2rem;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(0,200,255,0.15);
+      border: 1px solid rgba(0,200,255,0.3);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--electric); font-size: 1rem;
+      opacity: 0; transform: scale(0.8);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+
+    .chapter-card:hover .chapter-arrow { opacity: 1; transform: scale(1); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; text-align: center; padding-top: 120px; }
+      .hero-quote { margin: 1.5rem auto; }
+      .hero-portrait { margin-top: 2rem; }
+      .portrait-ring, .portrait-img { width: 280px; height: 280px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="Homepage.html" class="active">Home</a>
+    <a href="personal_album.html">Personal</a>
+    <a href="Collection.html">Collection</a>
+    <a href="Family-background.html">Family</a>
+    <a href="Education.html">Education</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-label">Welcome to my world</div>
+      <h1 class="hero-title">
+        Horizon
+        <span>My Story</span>
+      </h1>
+      <p class="hero-quote">
+        "Not in doing what you like,<br>
+        but liking what you do<br>
+        is the secret of happiness."
+      </p>
+      <a href="#chapters" class="hero-cta">Explore Chapters →</a>
+    </div>
+
+    <div class="hero-portrait">
+      <div class="portrait-ring">
+        <img src="Personal/p9.jpg" alt="Portrait" class="portrait-img">
+      </div>
+      <div class="portrait-badge">
+        <strong>Horizon</strong>
+        A personal portfolio
+      </div>
+    </div>
+  </section>
+
+  <!-- CHAPTERS -->
+  <section class="chapters" id="chapters">
+    <div class="chapters-header">
+      <div class="section-label">Navigate</div>
+      <h2>Explore the <em>Chapters</em></h2>
+    </div>
+
+    <div class="chapters-grid">
+
+      <div class="chapter-card">
+        <a href="personal_album.html">
+          <img src="Personal/p1.jpg" class="chapter-img" alt="Personal">
+          <div class="chapter-overlay"></div>
+          <div class="chapter-label">
+            <div class="chapter-num">01 / Chapter</div>
+            <div class="chapter-name">Personal</div>
+          </div>
+          <div class="chapter-arrow">→</div>
+        </a>
+      </div>
+
+      <div class="chapter-card">
+        <a href="Collection.html">
+          <img src="Personal/p1.jpg" class="chapter-img" alt="Collection">
+          <div class="chapter-overlay"></div>
+          <div class="chapter-label">
+            <div class="chapter-num">02 / Chapter</div>
+            <div class="chapter-name">Collection</div>
+          </div>
+          <div class="chapter-arrow">→</div>
+        </a>
+      </div>
+
+      <div class="chapter-card">
+        <a href="Family-background.html">
+          <img src="Personal/p1.jpg" class="chapter-img" alt="Family">
+          <div class="chapter-overlay"></div>
+          <div class="chapter-label">
+            <div class="chapter-num">03 / Chapter</div>
+            <div class="chapter-name">Family</div>
+          </div>
+          <div class="chapter-arrow">→</div>
+        </a>
+      </div>
+
+      <div class="chapter-card">
+        <a href="Education.html">
+          <img src="Personal/p1.jpg" class="chapter-img" alt="Education">
+          <div class="chapter-overlay"></div>
+          <div class="chapter-label">
+            <div class="chapter-num">04 / Chapter</div>
+            <div class="chapter-name">Education</div>
+          </div>
+          <div class="chapter-arrow">→</div>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Horizon Portfolio &nbsp;·&nbsp; Crafted with passion</p>
+  </footer>
+
+</body>
+</html>
