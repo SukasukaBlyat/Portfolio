@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Personal • Horizon</title>
+  <link rel="stylesheet" href="base.css">
+  <style>
+
+    /* ══════════════════════════════════════════
+       GRID OVERLAY — subtle depth texture
+    ══════════════════════════════════════════ */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: -1;
+      background-image:
+        linear-gradient(rgba(0,200,255,.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,200,255,.025) 1px, transparent 1px);
+      background-size: 52px 52px;
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════════════
+       ANIMATION SYSTEM
+       .reveal  → scroll-triggered (JS)
+       .load-in → page-load CSS stagger
+    ══════════════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity .65s ease, transform .65s ease;
+      transition-delay: var(--d, 0s);
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    .load-in {
+      animation: load-up .7s cubic-bezier(.22,1,.36,1) both;
+      animation-delay: var(--d, 0s);
+    }
+    @keyframes load-up {
+      from { opacity:0; transform:translateY(22px); }
+      to   { opacity:1; transform:none; }
+    }
+
+
+    /* ══════════════════════════════════════════
+       SHARED SECTION LABEL PATTERN
+    ══════════════════════════════════════════ */
+    .sec-label {
+      display: inline-flex; align-items: center; gap: .6rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--electric);
+      margin-bottom: .7rem;
+    }
+    .sec-label::before {
+      content: '';
+      display: block; width: 22px; height: 1px;
+      background: var(--electric);
+    }
+
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+      font-weight: 900; line-height: 1.12; color: var(--white);
+    }
+    .sec-title em { font-style: italic; color: var(--sky); }
+
+    .sec-head { margin-bottom: 2.8rem; }
+
+
+    /* ══════════════════════════════════════════
+       § 1 · HERO
+    ══════════════════════════════════════════ */
+    .hero {
+      min-height: 100vh;
+      padding: 130px 6% 90px;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .6rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--electric);
+      margin-bottom: 1.3rem;
+    }
+    .hero-eyebrow::before {
+      content: ''; width: 22px; height: 1px; background: var(--electric);
+    }
+
+    .hero-name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 5.5vw, 5.2rem);
+      font-weight: 900; line-height: 1.0; color: var(--white);
+    }
+    .hero-name em {
+      display: block; font-style: italic;
+      background: linear-gradient(90deg, var(--electric), var(--sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-role {
+      margin-top: 1rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hero-bio {
+      margin-top: 1.5rem;
+      font-size: 1rem; font-weight: 300; line-height: 1.85;
+      color: #8fb3cf; max-width: 460px;
+    }
+
+    /* Stats strip */
+    .stat-strip {
+      display: flex; gap: 0;
+      margin-top: 2.8rem;
+      border: 1px solid var(--border);
+      border-radius: 16px; overflow: hidden;
+      max-width: 420px;
+    }
+    .stat-cell {
+      flex: 1; padding: 1.1rem 1.4rem;
+      border-right: 1px solid var(--border);
+      transition: background .25s;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-cell:hover { background: var(--ghost); }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; font-weight: 900; color: var(--white); line-height: 1;
+    }
+    .stat-num span {
+      background: linear-gradient(90deg, var(--electric), var(--sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-lbl {
+      font-family: 'Space Mono', monospace;
+      font-size: .58rem; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--muted); margin-top: .25rem;
+    }
+
+    /* Hero visual card */
+    .hero-card {
+      background: var(--ghost);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      backdrop-filter: blur(24px);
+      padding: 2rem 1.8rem;
+      box-shadow: 0 32px 80px rgba(0,0,0,.45);
+      animation: load-up .8s .5s cubic-bezier(.22,1,.36,1) both,
+                 float 7s 1.5s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-14px); }
+    }
+
+    .hero-avatar {
+      width: 80px; height: 80px; border-radius: 50%;
+      background: linear-gradient(135deg,rgba(0,200,255,.2),rgba(37,99,235,.3));
+      border: 1.5px solid rgba(0,200,255,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.4rem; margin-bottom: 1.1rem;
+      box-shadow: 0 0 0 6px rgba(0,200,255,.05);
+    }
+    .hero-card-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 900; color: var(--white);
+    }
+    .hero-card-role {
+      font-family: 'Space Mono', monospace;
+      font-size: .6rem; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--electric); margin-bottom: 1.4rem;
+    }
+
+    .mini-bar-group { display: flex; flex-direction: column; gap: .7rem; }
+    .mini-bar-row {
+      display: grid;
+      grid-template-columns: 72px 1fr 32px;
+      align-items: center; gap: .6rem;
+    }
+    .mini-bar-name {
+      font-family: 'Space Mono', monospace;
+      font-size: .6rem; letter-spacing: .06em; color: var(--muted);
+    }
+    .mini-track {
+      height: 4px; background: rgba(255,255,255,.07);
+      border-radius: 9999px; overflow: hidden;
+    }
+    .mini-fill {
+      height: 100%; border-radius: 9999px;
+      background: linear-gradient(90deg, var(--electric), var(--sky));
+      width: 0%;
+      transition: width 1.3s cubic-bezier(.22,1,.36,1);
+    }
+    .mini-fill.on { width: var(--w); }
+    .mini-pct {
+      font-family: 'Space Mono', monospace;
+      font-size: .58rem; color: var(--muted); text-align: right;
+    }
+
+    .card-divider { height: 1px; background: var(--border); margin: 1.4rem 0; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: .4rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .6rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--electric);
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+    .status-dot.off { background: #34d399; animation: none; }
+
+
+    /* ══════════════════════════════════════════
+       § 2 · PROJECTS — BENTO GRID
+       3-column, structured rows:
+       Row 1: [Featured ×2] [Tall]
+       Row 2:               [Tall continues]
+       Row 3: [Card] [Card]
+       Row 4: [Wide ×2]     [Card]
+    ══════════════════════════════════════════ */
+    #projects { padding: 100px 6%; }
+
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.1rem;
+    }
+
+    .pc {
+      background: var(--ghost);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 1.8rem;
+      position: relative; overflow: hidden;
+      transition: transform .35s ease, box-shadow .35s ease, border-color .3s;
+    }
+
+    /* Accent top line */
+    .pc::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--ca, var(--electric)), transparent 70%);
+      opacity: .75;
+    }
+
+    /* Mouse-tracking inner glow */
+    .pc::after {
+      content: '';
+      position: absolute; inset: 0; border-radius: 22px;
+      background: radial-gradient(
+        circle at var(--mx,50%) var(--my,50%),
+        rgba(var(--ga, 0,200,255), .07) 0%,
+        transparent 60%
+      );
+      opacity: 0; transition: opacity .35s; pointer-events: none;
+    }
+
+    .pc:hover {
+      transform: translateY(-6px);
+      border-color: rgba(255,255,255,.16);
+      box-shadow: 0 24px 60px rgba(0,0,0,.35);
+    }
+    .pc:hover::after { opacity: 1; }
+
+    .pc.span2 { grid-column: span 2; }
+    .pc.tall  { grid-row:    span 2; }
+
+    .c-num {
+      font-family: 'Space Mono', monospace;
+      font-size: .6rem; letter-spacing: .2em; text-transform: uppercase;
+      color: var(--ca, var(--electric)); opacity: .7;
+      margin-bottom: .9rem;
+    }
+    .c-icon {
+      width: 50px; height: 50px; border-radius: 14px;
+      background: rgba(var(--ga, 0,200,255), .1);
+      border: 1px solid rgba(var(--ga, 0,200,255), .2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.45rem; margin-bottom: 1.1rem;
+      transition: background .3s, border-color .3s;
+    }
+    .pc:hover .c-icon {
+      background: rgba(var(--ga, 0,200,255), .18);
+      border-color: rgba(var(--ga, 0,200,255), .4);
+    }
+    .c-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; font-weight: 700; color: var(--white);
+      line-height: 1.2; margin-bottom: .55rem;
+    }
+    .c-desc {
+      font-size: .88rem; font-weight: 300; line-height: 1.75;
+      color: #7a9fba;
+    }
+    .c-tags {
+      display: flex; flex-wrap: wrap; gap: .35rem; margin-top: 1.1rem;
+    }
+    .ctag {
+      padding: .22rem .65rem; border-radius: 9999px;
+      font-family: 'Space Mono', monospace;
+      font-size: .58rem; letter-spacing: .07em;
+      background: rgba(var(--ga, 0,200,255), .09);
+      color: var(--ca, var(--electric));
+      border: 1px solid rgba(var(--ga, 0,200,255), .18);
+    }
+    .c-progress { margin-top: 1.3rem; }
+    .c-prog-track {
+      height: 3px; background: rgba(255,255,255,.06);
+      border-radius: 9999px; overflow: hidden;
+    }
+    .c-prog-fill {
+      height: 100%; border-radius: 9999px;
+      background: linear-gradient(90deg, var(--ca, var(--electric)), rgba(0,200,255,.3));
+      width: 0%;
+      transition: width 1.4s .2s cubic-bezier(.22,1,.36,1);
+    }
+    .c-prog-fill.on { width: var(--w, 80%); }
+    .c-prog-meta {
+      display: flex; justify-content: space-between; margin-top: .4rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .58rem; color: var(--muted); letter-spacing: .07em;
+    }
+    .c-list {
+      list-style: none; margin-top: 1.2rem;
+      display: flex; flex-direction: column; gap: .45rem;
+    }
+    .c-list li {
+      display: flex; align-items: center; gap: .55rem;
+      font-size: .82rem; color: #8fb3cf; font-weight: 300;
+    }
+    .c-list li::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      flex-shrink: 0; background: var(--ca, var(--electric));
+    }
+    .c-status {
+      display: inline-flex; align-items: center; gap: .4rem;
+      margin-top: 1.2rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .58rem; letter-spacing: .12em; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .c-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      margin-top: 1.3rem;
+      color: var(--ca, var(--electric));
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
+      text-decoration: none;
+      transition: gap .2s;
+    }
+    .c-link:hover { gap: .7rem; }
+    .c-rule { height: 1px; background: var(--border); margin: 1.3rem 0; }
+
+
+    /* ══════════════════════════════════════════
+       § 3 · SKILLS
+    ══════════════════════════════════════════ */
+    #skills { padding: 20px 6% 90px; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .9rem;
+    }
+    .sk-card {
+      background: var(--ghost);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.2rem 1.4rem;
+      display: grid;
+      grid-template-columns: 44px 1fr 36px;
+      align-items: center; gap: .9rem;
+      transition: border-color .25s, transform .25s;
+    }
+    .sk-card:hover {
+      border-color: rgba(255,255,255,.16);
+      transform: translateX(4px);
+    }
+    .sk-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: rgba(var(--si, 0,200,255), .1);
+      border: 1px solid rgba(var(--si, 0,200,255), .2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; flex-shrink: 0;
+    }
+    .sk-name {
+      font-size: .88rem; font-weight: 700; color: var(--white);
+      margin-bottom: .35rem;
+    }
+    .sk-track {
+      height: 3px; background: rgba(255,255,255,.06);
+      border-radius: 9999px; overflow: hidden;
+    }
+    .sk-fill {
+      height: 100%; border-radius: 9999px;
+      background: linear-gradient(90deg, rgb(var(--si,0,200,255)), rgba(var(--si,0,200,255),.3));
+      width: 0%;
+      transition: width 1.2s cubic-bezier(.22,1,.36,1);
+      transition-delay: var(--d, 0s);
+    }
+    .sk-fill.on { width: var(--sw); }
+    .sk-pct {
+      font-family: 'Space Mono', monospace;
+      font-size: .6rem; color: var(--muted); text-align: right;
+    }
+
+
+    /* ══════════════════════════════════════════
+       § 4 · PERSONAL ALBUM
+    ══════════════════════════════════════════ */
+    #album { padding: 20px 6% 100px; }
+
+    .album-cover {
+      display: block; text-decoration: none;
+      position: relative; border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      transition: border-color .4s, box-shadow .4s, transform .4s;
+    }
+    .album-cover:hover {
+      border-color: rgba(0,200,255,.3);
+      box-shadow: 0 32px 80px rgba(0,0,0,.5);
+      transform: translateY(-5px);
+    }
+
+    /* 5-photo strip */
+    .album-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      height: 300px; overflow: hidden;
+    }
+    .album-strip img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      filter: brightness(.55) saturate(.65);
+      transition: filter .5s, transform .5s;
+    }
+    .album-strip img + img { border-left: 1px solid rgba(0,0,0,.35); }
+    .album-cover:hover .album-strip img {
+      filter: brightness(.38) saturate(.45);
+      transform: scale(1.05);
+    }
+
+    /* Overlay */
+    .album-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: .9rem;
+      background: linear-gradient(to bottom, rgba(6,15,30,.25), rgba(6,15,30,.65));
+      transition: background .4s;
+    }
+    .album-cover:hover .album-overlay {
+      background: linear-gradient(to bottom, rgba(6,15,30,.5), rgba(6,15,30,.82));
+    }
+
+    .alb-tag {
+      display: flex; align-items: center; gap: .6rem;
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--electric);
+    }
+    .alb-tag::before, .alb-tag::after {
+      content: ''; width: 28px; height: 1px;
+      background: var(--electric); opacity: .6;
+    }
+    .alb-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 900; color: var(--white);
+      text-align: center; line-height: 1.1;
+    }
+    .alb-title em {
+      font-style: italic;
+      background: linear-gradient(90deg, var(--electric), var(--sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .alb-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem; letter-spacing: .15em;
+      color: rgba(255,255,255,.45);
+    }
+    .alb-pill {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .65rem 1.7rem; border-radius: 9999px;
+      background: linear-gradient(135deg, var(--bright), var(--electric));
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: .68rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase;
+      box-shadow: 0 8px 28px rgba(0,200,255,.3);
+      opacity: 0; transform: translateY(12px);
+      transition: opacity .3s .05s, transform .3s .05s;
+    }
+    .album-cover:hover .alb-pill { opacity: 1; transform: translateY(0); }
+
+    /* Bottom meta bar */
+    .alb-meta {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: rgba(6,15,30,.7);
+      backdrop-filter: blur(16px);
+    }
+    .alb-meta-text {
+      font-family: 'Space Mono', monospace;
+      font-size: .62rem; letter-spacing: .1em; color: var(--muted);
+    }
+    .alb-meta-text strong { color: var(--sky); margin-right: .3rem; }
+    .alb-dots { display: flex; gap: .35rem; }
+    .alb-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: rgba(255,255,255,.12);
+      transition: background .25s;
+    }
+    .album-cover:hover .alb-dot              { background: var(--electric); }
+    .album-cover:hover .alb-dot:nth-child(2) { transition-delay: .06s; }
+    .album-cover:hover .alb-dot:nth-child(3) { transition-delay: .12s; }
+    .album-cover:hover .alb-dot:nth-child(4) { transition-delay: .18s; }
+    .album-cover:hover .alb-dot:nth-child(5) { transition-delay: .24s; }
+
+
+    /* ══════════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════════ */
+    .page-footer {
+      border-top: 1px solid var(--border);
+      padding: 1.6rem 6%;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'Space Mono', monospace;
+      font-size: .65rem; letter-spacing: .1em; color: var(--muted);
+    }
+
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════════ */
+    @media (max-width: 960px) {
+      .hero { grid-template-columns: 1fr; gap: 3rem; padding-top: 120px; }
+      .hero-card { max-width: 380px; }
+      .bento { grid-template-columns: 1fr 1fr; }
+      .pc.span2 { grid-column: span 2; }
+      .pc.tall  { grid-row: span 1; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .hero { padding: 110px 5% 70px; }
+      #projects, #skills, #album { padding-left: 5%; padding-right: 5%; }
+      .bento { grid-template-columns: 1fr; }
+      .pc.span2 { grid-column: span 1; }
+      .skills-grid { grid-template-columns: 1fr; }
+      .stat-strip { max-width: 100%; }
+      .album-strip { height: 220px; grid-template-columns: repeat(3,1fr); }
+      .album-strip img:nth-child(4),
+      .album-strip img:nth-child(5) { display: none; }
+      .page-footer { flex-direction: column; gap: .4rem; text-align: center; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- NAV — uses base.css .site-nav -->
+  <nav class="site-nav">
+    <a href="Homepage.html">Home</a>
+    <a href="Personal.html" class="active">Personal</a>
+    <a href="Collection.html">Collection</a>
+    <a href="Family-background.html">Family</a>
+    <a href="Education.html">Education</a>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════
+       § 1 · HERO
+  ═══════════════════════════════════ -->
+  <section class="hero">
+
+    <div>
+      <div class="hero-eyebrow load-in" style="--d:.08s">01 / Personal</div>
+      <h1 class="hero-name load-in" style="--d:.18s">
+        Hi, I'm
+        <em>Your Name</em>
+      </h1>
+      <p class="hero-role load-in" style="--d:.26s">Student · Developer · Creator</p>
+      <p class="hero-bio load-in" style="--d:.34s">
+        I'm a curious, self-driven student who turns ideas into things that work — games, websites, and creative experiments. I believe the best way to learn is to build, and the best way to grow is to keep shipping.
+      </p>
+
+      <div class="stat-strip load-in" style="--d:.44s">
+        <div class="stat-cell">
+          <div class="stat-num"><span>6+</span></div>
+          <div class="stat-lbl">Projects</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num"><span>3</span></div>
+          <div class="stat-lbl">Languages</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num"><span>∞</span></div>
+          <div class="stat-lbl">Curiosity</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="hero-card">
+        <div class="hero-avatar">🧑‍💻</div>
+        <div class="hero-card-name">Your Name</div>
+        <div class="hero-card-role">Student Developer</div>
+
+        <div class="mini-bar-group">
+          <div class="mini-bar-row">
+            <span class="mini-bar-name">HTML/CSS</span>
+            <div class="mini-track"><div class="mini-fill" style="--w:88%"></div></div>
+            <span class="mini-pct">88%</span>
+          </div>
+          <div class="mini-bar-row">
+            <span class="mini-bar-name">JavaScript</span>
+            <div class="mini-track"><div class="mini-fill" style="--w:72%"></div></div>
+            <span class="mini-pct">72%</span>
+          </div>
+          <div class="mini-bar-row">
+            <span class="mini-bar-name">Python</span>
+            <div class="mini-track"><div class="mini-fill" style="--w:60%"></div></div>
+            <span class="mini-pct">60%</span>
+          </div>
+          <div class="mini-bar-row">
+            <span class="mini-bar-name">Design</span>
+            <div class="mini-track"><div class="mini-fill" style="--w:78%"></div></div>
+            <span class="mini-pct">78%</span>
+          </div>
+        </div>
+
+        <div class="card-divider"></div>
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          Open to opportunities
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- ═══════════════════════════════════
+       § 2 · PROJECTS
+  ═══════════════════════════════════ -->
+  <section id="projects">
+
+    <div class="sec-head reveal">
+      <div class="sec-label">What I've Built</div>
+      <h2 class="sec-title">My <em>Projects</em></h2>
+    </div>
+
+    <div class="bento">
+
+      <!-- 01 · Featured — wide -->
+      <div class="pc span2 reveal" style="--d:.05s; --ca:#00c8ff; --ga:0,200,255;">
+        <div class="c-num">01 · Featured</div>
+        <div class="c-icon">🌐</div>
+        <div class="c-title">Horizon Portfolio Website</div>
+        <div class="c-desc">A fully responsive multi-page personal portfolio built from scratch with pure HTML, CSS, and JavaScript. Unified dark design system, scroll-reveal animations, and modular page architecture.</div>
+        <div class="c-tags">
+          <span class="ctag">HTML5</span><span class="ctag">CSS3</span>
+          <span class="ctag">JavaScript</span><span class="ctag">Design System</span>
+          <span class="ctag">Responsive</span>
+        </div>
+        <div class="c-progress">
+          <div class="c-prog-track"><div class="c-prog-fill" style="--w:100%"></div></div>
+          <div class="c-prog-meta"><span>Completion</span><span>100%</span></div>
+        </div>
+        <div class="c-status"><span class="status-dot off"></span> Completed</div>
+      </div>
+
+      <!-- 02 · Tall — Minesweeper -->
+      <div class="pc tall reveal" style="--d:.1s; --ca:#818cf8; --ga:129,140,248;">
+        <div class="c-num">02 · Game</div>
+        <div class="c-icon">💣</div>
+        <div class="c-title">Minesweeper</div>
+        <div class="c-desc">A fully playable browser Minesweeper with first-click safety, recursive flood-fill reveal, and a flag system.</div>
+        <div class="c-tags">
+          <span class="ctag">JavaScript</span><span class="ctag">DOM API</span><span class="ctag">Game Logic</span>
+        </div>
+        <div class="c-rule"></div>
+        <ul class="c-list">
+          <li>Recursive flood-fill algorithm</li>
+          <li>Multiple difficulty levels</li>
+          <li>First-click safety guarantee</li>
+          <li>High-score tracking</li>
+        </ul>
+        <div class="c-status"><span class="status-dot off"></span> Completed</div>
+        <a href="minesweeper.html" class="c-link">Play Now →</a>
+      </div>
+
+      <!-- 03 · Flappy Bird -->
+      <div class="pc reveal" style="--d:.15s; --ca:#34d399; --ga:52,211,153;">
+        <div class="c-num">03 · Game</div>
+        <div class="c-icon">🐦</div>
+        <div class="c-title">Flappy Bird</div>
+        <div class="c-desc">Flappy Bird clone on HTML5 Canvas. Gravity physics, procedurally generated pipes, and live score display.</div>
+        <div class="c-tags">
+          <span class="ctag">Canvas API</span><span class="ctag">Physics</span><span class="ctag">JavaScript</span>
+        </div>
+        <div class="c-status"><span class="status-dot off"></span> Completed</div>
+        <a href="flappy-bird-game.html" class="c-link">Play Now →</a>
+      </div>
+
+      <!-- 04 · School Page -->
+      <div class="pc reveal" style="--d:.2s; --ca:#fbbf24; --ga:251,191,36;">
+        <div class="c-num">04 · Web</div>
+        <div class="c-icon">🏫</div>
+        <div class="c-title">Quirino High School Page</div>
+        <div class="c-desc">Responsive school webpage using CSS Grid with JavaScript-driven dynamic content switching between sections.</div>
+        <div class="c-tags">
+          <span class="ctag">CSS Grid</span><span class="ctag">JavaScript</span><span class="ctag">Responsive</span>
+        </div>
+        <div class="c-status"><span class="status-dot off"></span> Completed</div>
+      </div>
+
+      <!-- 05 · Login Portal — wide -->
+      <div class="pc span2 reveal" style="--d:.25s; --ca:#fb7185; --ga:251,113,133;">
+        <div class="c-num">05 · Auth System</div>
+        <div class="c-icon">🔐</div>
+        <div class="c-title">Horizon Login Portal</div>
+        <div class="c-desc">Credential-based login page with real-time form validation, show/hide password toggle, animated feedback states, and role-based routing to different project destinations.</div>
+        <div class="c-tags">
+          <span class="ctag">JavaScript</span><span class="ctag">Form Validation</span>
+          <span class="ctag">CSS Animation</span><span class="ctag">UX Design</span>
+          <span class="ctag">Routing Logic</span>
+        </div>
+        <div class="c-progress">
+          <div class="c-prog-track"><div class="c-prog-fill" style="--w:90%"></div></div>
+          <div class="c-prog-meta"><span>Implementation</span><span>90%</span></div>
+        </div>
+        <div class="c-status"><span class="status-dot"></span> In Progress</div>
+      </div>
+
+      <!-- 06 · Next -->
+      <div class="pc reveal" style="--d:.3s; --ca:#6366f1; --ga:99,102,241;">
+        <div class="c-num">06 · Future</div>
+        <div class="c-icon">🚀</div>
+        <div class="c-title">Next Project</div>
+        <div class="c-desc">Always planning something new. Exploring ideas in game development, tools, and interactive web experiences.</div>
+        <div class="c-tags"><span class="ctag">Coming Soon</span></div>
+        <div class="c-status">
+          <span class="status-dot" style="background:#6366f1;animation:none;"></span> Planning
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════
+       § 3 · SKILLS
+  ═══════════════════════════════════ -->
+  <section id="skills">
+
+    <div class="sec-head reveal">
+      <div class="sec-label">Toolkit</div>
+      <h2 class="sec-title">Skills &amp; <em>Technologies</em></h2>
+    </div>
+
+    <div class="skills-grid">
+
+      <div class="sk-card reveal" style="--d:.04s; --si:0,200,255;">
+        <div class="sk-icon">🌐</div>
+        <div class="sk-body">
+          <div class="sk-name">HTML5 / CSS3</div>
+          <div class="sk-track"><div class="sk-fill" style="--sw:88%; --si:0,200,255; --d:.08s;"></div></div>
+        </div>
+        <span class="sk-pct">88%</span>
+      </div>
+
+      <div class="sk-card reveal" style="--d:.08s; --si:251,191,36;">
+        <div class="sk-icon">⚡</div>
+        <div class="sk-body">
+          <div class="sk-name">JavaScript</div>
+          <div class="sk-track"><div class="sk-fill" style="--sw:72%; --si:251,191,36; --d:.12s;"></div></div>
+        </div>
+        <span class="sk-pct">72%</span>
+      </div>
+
+      <div class="sk-card reveal" style="--d:.12s; --si:52,211,153;">
+        <div class="sk-icon">🐍</div>
+        <div class="sk-body">
+          <div class="sk-name">Python</div>
+          <div class="sk-track"><div class="sk-fill" style="--sw:60%; --si:52,211,153; --d:.16s;"></div></div>
+        </div>
+        <span class="sk-pct">60%</span>
+      </div>
+
+      <div class="sk-card reveal" style="--d:.16s; --si:129,140,248;">
+        <div class="sk-icon">🎨</div>
+        <div class="sk-body">
+          <div class="sk-name">UI / UX Design</div>
+          <div class="sk-track"><div class="sk-fill" style="--sw:78%; --si:129,140,248; --d:.20s;"></div></div>
+        </div>
+        <span class="sk-pct">78%</span>
+      </div>
+
+      <div class="sk-card reveal" style="--d:.20s; --si:251,113,133;">
+        <div class="sk-icon">🎮</div>
+        <div class="sk-body">
+          <div class="sk-name">Canvas / Game Dev</div>
+          <div class="sk-track"><div class="sk-fill" style="--sw:65%; --si:251,113,133; --d:.24s;"></div></div>
+        </div>
+        <span class="sk-pct">65%</span>
+      </div>
+
+      <div class="sk-card reveal" style="--d:.24s; --si:99,102,241;">
+        <div class="sk-icon">🧩</div>
+        <div class="sk-body">
+          <div class="sk-name">Problem Solving</div>
+          <div class="sk-track"><div class="sk-fill" style="--sw:82%; --si:99,102,241; --d:.28s;"></div></div>
+        </div>
+        <span class="sk-pct">82%</span>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════
+       § 4 · PERSONAL ALBUM
+  ═══════════════════════════════════ -->
+  <section id="album">
+
+    <div class="sec-head reveal">
+      <div class="sec-label">Gallery</div>
+      <h2 class="sec-title">Personal <em>Album</em></h2>
+    </div>
+
+    <a href="personal_album.html" class="album-cover reveal" style="--d:.1s;">
+
+      <div class="album-strip">
+        <img src="Personal/p1.jpg"  alt="">
+        <img src="Personal/p4.jpg"  alt="">
+        <img src="Personal/p8.jpg"  alt="">
+        <img src="Personal/p12.jpg" alt="">
+        <img src="Personal/p15.jpg" alt="">
+      </div>
+
+      <div class="album-overlay">
+        <div class="alb-tag">A glimpse into my life</div>
+        <div class="alb-title">My <em>Photos</em></div>
+        <div class="alb-sub">16 photos · Personal moments</div>
+        <div class="alb-pill">Open Album →</div>
+      </div>
+
+      <div class="alb-meta">
+        <div class="alb-meta-text"><strong>16</strong>photos collected</div>
+        <div class="alb-dots">
+          <div class="alb-dot"></div>
+          <div class="alb-dot"></div>
+          <div class="alb-dot"></div>
+          <div class="alb-dot"></div>
+          <div class="alb-dot"></div>
+        </div>
+      </div>
+
+    </a>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="page-footer">
+    <span>© 2025 Horizon Portfolio</span>
+    <span>Personal · Chapter 01</span>
+  </footer>
+
+
+  <!-- ═══════════════════════════════════
+       SCRIPT — 3-part system
+  ═══════════════════════════════════ -->
+  <script>
+    /* 1 · Scroll reveal */
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* 2 · Bar fills — fire when in view */
+    const barObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('on');
+        barObs.unobserve(e.target);
+      });
+    }, { threshold: 0.4 });
+    document.querySelectorAll('.mini-fill, .sk-fill, .c-prog-fill').forEach(el => barObs.observe(el));
+
+    /* 3 · Mouse-tracking glow on project cards */
+    document.querySelectorAll('.pc').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((e.clientX - r.left) / r.width  * 100).toFixed(1) + '%');
+        card.style.setProperty('--my', ((e.clientY - r.top)  / r.height * 100).toFixed(1) + '%');
+      });
+    });
+
+    /* Nav shadow on scroll */
+    const nav = document.querySelector('.site-nav');
+    window.addEventListener('scroll', () => {
+      nav.style.boxShadow = scrollY > 30
+        ? '0 12px 40px rgba(0,0,0,.55)'
+        : '0 8px 32px rgba(0,0,0,.4)';
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
