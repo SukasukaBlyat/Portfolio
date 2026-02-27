@@ -6,6 +6,48 @@
   <title>Horizon • Homepage</title>
   <link rel="stylesheet" href="base.css">
   <style>
+    /* ── LOGOUT BUTTON ── */
+    .logout-btn {
+      position: fixed;
+      top: 18px;
+      right: 28px;
+      z-index: 1100;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 9px 18px;
+      border-radius: 9999px;
+      background: rgba(6,15,30,0.7);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(24px);
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.25s, border-color 0.25s, box-shadow 0.25s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    }
+
+    .logout-btn svg {
+      width: 13px; height: 13px;
+      flex-shrink: 0;
+      transition: transform 0.25s;
+    }
+
+    .logout-btn:hover {
+      color: var(--error, #f87171);
+      border-color: rgba(248,113,113,0.35);
+      box-shadow: 0 8px 28px rgba(248,113,113,0.12);
+    }
+
+    .logout-btn:hover svg {
+      transform: translateX(2px);
+    }
+
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
@@ -230,6 +272,7 @@
       .hero-quote { margin: 1.5rem auto; }
       .hero-portrait { margin-top: 2rem; }
       .portrait-ring, .portrait-img { width: 280px; height: 280px; }
+      .logout-btn { top: 14px; right: 16px; padding: 8px 14px; }
     }
   </style>
 </head>
@@ -242,6 +285,16 @@
     <a href="Family-background.html">Family</a>
     <a href="Education.html">Education</a>
   </nav>
+
+  <!-- LOGOUT -->
+  <button class="logout-btn" id="logoutBtn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Log Out
+  </button>
 
   <!-- HERO -->
   <section class="hero">
@@ -333,6 +386,19 @@
   <footer>
     <p>© 2025 Horizon Portfolio &nbsp;·&nbsp; Crafted with passion</p>
   </footer>
+
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      // Animate out
+      this.textContent = 'Signing out…';
+      this.style.pointerEvents = 'none';
+      this.style.opacity = '0.5';
+
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 700);
+    });
+  </script>
 
 </body>
 </html>
