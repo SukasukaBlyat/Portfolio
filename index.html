@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Horizon • Log In</title>
+  <title>Just Log in Page</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400&family=Lato:wght@300;400;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -568,32 +568,53 @@
     form.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      const email = emailInput.value.trim();
+      const email = emailInput.value.trim().toLowerCase();
       const pw    = pwInput.value.trim();
 
       document.getElementById('emailError').style.display    = 'none';
       document.getElementById('passwordError').style.display = 'none';
+      emailInput.style.borderColor = '';
 
-      let redirect = null;
-
-      if (email === "Homepage@Page.html" && pw === "password123") {
-        redirect = "Homepage.html";
-      } else if (email === "Minesweeper@game.html" && pw === "password") {
-        redirect = "minesweeper.html";
-      } else if (email === "FlappyBird@game.html" && pw === "password") {
-        redirect = "flappy-bird-game.html";
-      } else {
-        const err     = document.getElementById('emailError');
-        err.textContent   = 'Invalid email or password.';
-        err.style.display = 'block';
-        emailInput.style.borderColor = 'rgba(248,113,113,0.5)';
-        return;
+      // ── Game accounts (unchanged) ──────────────────────────────────────
+      if (email === "minesweeper@game.html" && pw === "password") {
+        return doLogin("minesweeper.html");
+      }
+      if (email === "flappybird@game.html" && pw === "password") {
+        return doLogin("flappy-bird-game.html");
       }
 
+      // ── User-created account from Sign Up ──────────────────────────────
+      const stored = localStorage.getItem('horizon_account');
+      if (stored) {
+        const account = JSON.parse(stored);
+        if (email === account.email.toLowerCase()) {
+          if (pw === account.password) {
+            return doLogin("Homepage.html");
+          } else {
+            // Email matched but wrong password
+            showError('passwordError', 'Incorrect password.');
+            pwInput.style.borderColor = 'rgba(248,113,113,0.5)';
+            return;
+          }
+        }
+      }
+
+      // ── No match at all ────────────────────────────────────────────────
+      showError('emailError', 'No account found with that email.');
+      emailInput.style.borderColor = 'rgba(248,113,113,0.5)';
+    });
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent   = msg;
+      el.style.display = 'block';
+    }
+
+    function doLogin(redirect) {
       submitBtn.classList.add('loading');
       submitBtn.textContent = 'Entering…';
       setTimeout(() => { window.location.href = redirect; }, 1000);
-    });
+    }
   </script>
 </body>
 </html>
