@@ -49,43 +49,65 @@
       margin-bottom: 2rem;
     }
 
-    .album-preview {
-      display: flex; align-items: center; gap: 1.5rem;
-      padding: 1.5rem 2rem;
-      background: var(--ghost);
-      border: 1px solid rgba(0,200,255,0.2);
-      border-radius: 18px;
-      text-decoration: none; color: inherit;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-
-    .album-preview:hover {
-      border-color: rgba(0,200,255,0.5);
-      transform: translateY(-2px);
-    }
-
-    .preview-thumb {
-      width: 80px; height: 80px;
-      object-fit: cover; border-radius: 12px;
-      border: 1px solid var(--border);
-    }
-
-    .preview-text .preview-label {
+    /* ── Project Cards ── */
+    .section-label {
       font-family: 'Space Mono', monospace;
-      font-size: 0.68rem; color: var(--electric);
-      letter-spacing: 0.15em; text-transform: uppercase;
-      margin-bottom: 0.3rem;
+      font-size: 0.72rem;
+      color: var(--electric);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
     }
 
-    .preview-text strong {
-      display: block;
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .project-card {
+      padding: 1.8rem;
+      background: var(--ghost);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(16px);
+      transition: border-color 0.2s, transform 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .project-card:hover {
+      border-color: rgba(0,200,255,0.35);
+      transform: translateY(-3px);
+    }
+
+    .project-card-icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .project-card-title {
       font-family: 'Playfair Display', serif;
-      font-size: 1.15rem; color: var(--white);
+      font-size: 1.1rem;
+      color: var(--white);
+      font-weight: 700;
     }
 
-    .preview-arrow {
-      margin-left: auto;
-      color: var(--electric); font-size: 1.3rem;
+    .project-card-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--electric);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .project-card-desc {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-top: 0.2rem;
     }
   </style>
 </head>
@@ -151,14 +173,39 @@
       </p>
     </div>
 
-    <a href="Collection-album.html" class="album-preview">
-      <img src="Collection/p1.jpg" class="preview-thumb" alt="Collection Album">
-      <div class="preview-text">
-        <div class="preview-label">Explore</div>
-        <strong>View Collection Album</strong>
+    <!-- Project Cards -->
+    <div class="section-label">Personal Projects</div>
+    <div class="projects-grid">
+
+      <div class="project-card">
+        <div class="project-card-icon">🌐</div>
+        <div class="project-card-tag">Web Development</div>
+        <div class="project-card-title">Personal Portfolio Site</div>
+        <div class="project-card-desc">Designed and built this website from scratch to document my story, interests, and growth over time.</div>
       </div>
-      <div class="preview-arrow">→</div>
-    </a>
+
+      <div class="project-card">
+        <div class="project-card-icon">🤖</div>
+        <div class="project-card-tag">Automation</div>
+        <div class="project-card-title">Task Automation Scripts</div>
+        <div class="project-card-desc">Wrote scripts to automate repetitive daily tasks, putting YouTube tutorials directly into practice.</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-card-icon">🎮</div>
+        <div class="project-card-tag">Game Design</div>
+        <div class="project-card-title">Mini Game Prototype</div>
+        <div class="project-card-desc">Prototyped a small strategy game concept inspired by the mechanics I enjoy most as a player.</div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-card-icon">📖</div>
+        <div class="project-card-tag">Creative Writing</div>
+        <div class="project-card-title">Worldbuilding Journal</div>
+        <div class="project-card-desc">An ongoing journal where I develop fictional worlds and characters inspired by my favorite apocalyptic fiction.</div>
+      </div>
+
+    </div>
 
   </div>
 
