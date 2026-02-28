@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
     <title>Minesweeper - Classic Puzzle Game</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght:700;900&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -83,9 +87,16 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             position: relative;
             overflow-x: hidden;
             transition: background 0.4s ease, color 0.4s ease;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         /* ==================== ANIMATED BACKGROUND ==================== */
@@ -293,6 +304,28 @@
             color: #ffffff;
         }
 
+        .board-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+            margin-bottom: 24px;
+        }
+
+        .board-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .board-wrapper::-webkit-scrollbar-track {
+            background: var(--tile-bg);
+            border-radius: 3px;
+        }
+
+        .board-wrapper::-webkit-scrollbar-thumb {
+            background: var(--text-accent);
+            border-radius: 3px;
+        }
+
         /* ==================== GAME BOARD ==================== */
         .game-board {
             display: grid;
@@ -300,15 +333,18 @@
             background: var(--border-color);
             padding: 4px;
             border-radius: 12px;
-            margin-bottom: 24px;
             justify-content: center;
-            max-width: 100%;
-            overflow-x: auto;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tile {
-            width: 40px;
-            height: 40px;
+            width: var(--tile-size, 40px);
+            height: var(--tile-size, 40px);
+            min-width: 28px;
+            min-height: 28px;
             background: var(--tile-bg);
             border: 2px solid var(--border-color);
             border-radius: 6px;
@@ -317,11 +353,12 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: clamp(0.8rem, calc(var(--tile-size, 40px) * 0.5), 1.1rem);
             transition: all 0.15s ease;
             user-select: none;
             position: relative;
             overflow: hidden;
+            touch-action: manipulation;
         }
 
         .tile::before {
@@ -395,6 +432,20 @@
             }
             75% {
                 transform: rotate(10deg);
+            }
+        }
+
+        .tile.long-pressing {
+            animation: longPressEffect 0.5s ease;
+            background: var(--tile-flag);
+        }
+
+        @keyframes longPressEffect {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
             }
         }
 
@@ -593,47 +644,129 @@
         @media (max-width: 768px) {
             .game-card {
                 padding: 20px;
+                border-radius: 20px;
             }
 
             .game-title {
-                font-size: 2rem;
+                font-size: 1.75rem;
             }
 
             .tile {
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
+                --tile-size: 36px;
+                border-radius: 5px;
             }
 
             .info-value {
                 font-size: 1.5rem;
+            }
+
+            .info-box {
+                padding: 12px 16px;
             }
 
             .btn {
                 padding: 10px 20px;
                 font-size: 0.9rem;
             }
+
+            .game-board {
+                gap: 1px;
+                padding: 3px;
+            }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 640px) {
+            .container {
+                padding: 10px;
+            }
+
+            .game-card {
+                padding: 16px;
+            }
+
             .game-title {
                 font-size: 1.5rem;
             }
 
             .tile {
-                width: 30px;
-                height: 30px;
-                font-size: 0.9rem;
+                --tile-size: 32px;
                 border-radius: 4px;
+                min-width: 32px;
+                min-height: 32px;
             }
 
             .info-box {
-                min-width: 100px;
-                padding: 12px 16px;
+                min-width: 90px;
+                padding: 10px 12px;
+            }
+
+            .info-label {
+                font-size: 0.7rem;
             }
 
             .info-value {
-                font-size: 1.25rem;
+                font-size: 1.3rem;
+            }
+
+            .btn-difficulty {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+
+            .game-header {
+                gap: 12px;
+            }
+
+            .game-info {
+                gap: 8px;
+            }
+
+            .controls {
+                gap: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-card {
+                padding: 12px;
+                border-radius: 16px;
+            }
+
+            .game-title {
+                font-size: 1.3rem;
+            }
+
+            .tile {
+                --tile-size: 28px;
+                border-radius: 3px;
+                border-width: 1px;
+                min-width: 28px;
+                min-height: 28px;
+            }
+
+            .info-box {
+                min-width: 80px;
+                padding: 8px 10px;
+                border-radius: 12px;
+            }
+
+            .info-label {
+                font-size: 0.65rem;
+                letter-spacing: 0.5px;
+            }
+
+            .info-value {
+                font-size: 1.2rem;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+
+            .btn-difficulty {
+                padding: 7px 14px;
+                font-size: 0.8rem;
             }
 
             .modal-content {
@@ -646,6 +779,79 @@
 
             .modal-title {
                 font-size: 1.5rem;
+            }
+
+            .footer {
+                font-size: 0.75rem;
+            }
+
+            .game-board {
+                gap: 1px;
+                padding: 2px;
+                border-radius: 8px;
+            }
+
+            .theme-toggle,
+            .sound-toggle {
+                transform: scale(0.9);
+            }
+        }
+
+        /* Extra small devices (very narrow phones) */
+        @media (max-width: 380px) {
+            .tile {
+                --tile-size: 26px;
+                min-width: 26px;
+                min-height: 26px;
+            }
+
+            .game-title {
+                font-size: 1.1rem;
+            }
+
+            .info-value {
+                font-size: 1.1rem;
+            }
+
+            .btn-difficulty {
+                font-size: 0.75rem;
+                padding: 6px 12px;
+            }
+        }
+
+        /* Landscape orientation on mobile */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                padding: 10px;
+            }
+
+            .game-card {
+                padding: 12px;
+            }
+
+            .game-info {
+                margin-bottom: 12px;
+            }
+
+            .game-board {
+                margin-bottom: 12px;
+            }
+
+            .controls {
+                margin-bottom: 10px;
+            }
+
+            .footer {
+                margin-top: 10px;
+                font-size: 0.75rem;
+            }
+
+            .info-box {
+                padding: 8px 12px;
+            }
+
+            .tile {
+                --tile-size: 30px;
             }
         }
 
@@ -677,6 +883,38 @@
 
         .footer a:hover {
             text-decoration: underline;
+        }
+
+        .mobile-instructions {
+            display: none;
+        }
+
+        @media (max-width: 768px) and (pointer: coarse) {
+            .desktop-instructions {
+                display: none !important;
+            }
+            
+            .mobile-instructions {
+                display: block !important;
+            }
+        }
+
+        .mobile-help {
+            display: none;
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            text-align: center;
+            animation: slideIn 0.5s ease;
+        }
+
+        @media (max-width: 768px) and (pointer: coarse) {
+            .mobile-help {
+                display: block;
+            }
         }
     </style>
 </head>
@@ -720,8 +958,15 @@
                 </div>
             </div>
 
+            <!-- Mobile Help -->
+            <div class="mobile-help">
+                📱 Tap to reveal • Hold (0.5s) to flag
+            </div>
+
             <!-- Game Board -->
-            <div class="game-board" id="gameBoard"></div>
+            <div class="board-wrapper">
+                <div class="game-board" id="gameBoard"></div>
+            </div>
 
             <!-- Controls -->
             <div class="controls">
@@ -747,7 +992,8 @@
 
             <!-- Footer -->
             <div class="footer">
-                <p>Left-click to reveal • Right-click to flag • Double-click revealed numbers to chord • Clear all non-mine tiles to win!</p>
+                <p class="desktop-instructions">Left-click to reveal • Right-click to flag • Double-click revealed numbers to chord • Clear all non-mine tiles to win!</p>
+                <p class="mobile-instructions" style="display: none;">Tap to reveal • Hold to flag • Tap revealed numbers twice to chord</p>
             </div>
         </div>
     </div>
@@ -794,6 +1040,22 @@
                 this.loadTheme();
                 this.loadSoundPreference();
                 this.resetGame();
+                
+                // Handle window resize for responsive tile sizing
+                let resizeTimeout;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimeout);
+                    resizeTimeout = setTimeout(() => {
+                        this.calculateTileSize();
+                    }, 250);
+                });
+                
+                // Handle orientation change
+                window.addEventListener('orientationchange', () => {
+                    setTimeout(() => {
+                        this.calculateTileSize();
+                    }, 300);
+                });
             }
 
             // ==================== EVENT LISTENERS ====================
@@ -1076,6 +1338,9 @@
                 gameBoard.style.gridTemplateColumns = `repeat(${this.config.cols}, 1fr)`;
                 gameBoard.style.gridTemplateRows = `repeat(${this.config.rows}, 1fr)`;
 
+                // Calculate optimal tile size for mobile
+                this.calculateTileSize();
+
                 for (let row = 0; row < this.config.rows; row++) {
                     for (let col = 0; col < this.config.cols; col++) {
                         const tile = document.createElement('div');
@@ -1126,17 +1391,29 @@
                         let touchMoved = false;
                         tile.addEventListener('touchstart', (e) => {
                             touchMoved = false;
+                            tile.classList.add('long-pressing');
                             longPressTimer = setTimeout(() => {
                                 if (!touchMoved) {
+                                    tile.classList.remove('long-pressing');
                                     this.toggleFlag(row, col);
+                                    // Haptic feedback if available
+                                    if (navigator.vibrate) {
+                                        navigator.vibrate(50);
+                                    }
                                 }
                             }, 500);
                         });
                         tile.addEventListener('touchmove', () => {
                             touchMoved = true;
+                            tile.classList.remove('long-pressing');
                             clearTimeout(longPressTimer);
                         });
                         tile.addEventListener('touchend', () => {
+                            tile.classList.remove('long-pressing');
+                            clearTimeout(longPressTimer);
+                        });
+                        tile.addEventListener('touchcancel', () => {
+                            tile.classList.remove('long-pressing');
                             clearTimeout(longPressTimer);
                         });
 
@@ -1153,6 +1430,24 @@
                         gameBoard.appendChild(tile);
                     }
                 }
+            }
+
+            calculateTileSize() {
+                // Calculate optimal tile size based on screen width
+                const screenWidth = window.innerWidth;
+                const padding = screenWidth < 480 ? 40 : screenWidth < 768 ? 60 : 80;
+                const availableWidth = screenWidth - padding;
+                const gap = screenWidth < 480 ? 1 : 2;
+                const totalGapWidth = gap * (this.config.cols - 1);
+                const optimalTileSize = Math.floor((availableWidth - totalGapWidth) / this.config.cols);
+                
+                // Set minimum and maximum tile sizes
+                const minSize = 24;
+                const maxSize = 50;
+                const tileSize = Math.max(minSize, Math.min(maxSize, optimalTileSize));
+                
+                // Apply CSS variable
+                document.documentElement.style.setProperty('--tile-size', `${tileSize}px`);
             }
 
             // ==================== UI UPDATES ====================
