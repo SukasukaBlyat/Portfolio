@@ -936,6 +936,18 @@
         ? '0 12px 40px rgba(0,0,0,.55)'
         : '0 8px 32px rgba(0,0,0,.4)';
     }, { passive: true });
+    // Logout button animation and redirect
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      // Animate out
+      this.textContent = 'Signing out…';
+      this.style.pointerEvents = 'none';
+      this.style.opacity = '0.5';
+
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 700);
+    });
+
   </script>
 
 </body>

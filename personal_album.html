@@ -61,6 +61,17 @@
   <div style="text-align:center; padding-bottom: 80px;">
     <a href="Homepage.html" class="back-link">Back to Home</a>
   </div>
+  <script>
+    document.getElementById('logoutBtn').addEventListener('click', function () {
+      // Animate out
+      this.textContent = 'Signing out…';
+      this.style.pointerEvents = 'none';
+      this.style.opacity = '0.5';
 
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 700);
+    });
+  </script>
 </body>
 </html>
