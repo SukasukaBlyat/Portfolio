@@ -74,6 +74,48 @@ body::before {
 .site-nav a.active { color: var(--white); }
 .site-nav a.active::after { width: 100%; }
 
+/* ── LOGOUT BUTTON ── */
+.logout-btn {
+  position: fixed;
+  top: 18px;
+  right: 28px;
+  z-index: 1100;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 9px 18px;
+  border-radius: 9999px;
+  background: rgba(6,15,30,0.7);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(24px);
+  color: var(--muted);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.25s, border-color 0.25s, box-shadow 0.25s;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.logout-btn svg {
+  width: 13px; height: 13px;
+  flex-shrink: 0;
+  transition: transform 0.25s;
+}
+
+.logout-btn:hover {
+  color: var(--error, #f87171);
+  border-color: rgba(248,113,113,0.35);
+  box-shadow: 0 8px 28px rgba(248,113,113,0.12);
+}
+
+.logout-btn:hover svg {
+  transform: translateX(2px);
+}
+
 /* ── PAGE HERO BANNER ── */
 .page-banner {
   padding: 160px 6% 80px;
