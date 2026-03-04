@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <!-- Background fill -->
+    <linearGradient id="bg" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#060f1e"/>
+      <stop offset="100%" stop-color="#0c1f3f"/>
+    </linearGradient>
+    <!-- Arc glow gradient -->
+    <linearGradient id="arc" x1="8" y1="32" x2="56" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#00c8ff"/>
+      <stop offset="100%" stop-color="#7dd3fc"/>
+    </linearGradient>
+    <!-- Horizon line gradient -->
+    <linearGradient id="line" x1="4" y1="36" x2="60" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="transparent"/>
+      <stop offset="25%"  stop-color="#00c8ff"/>
+      <stop offset="75%"  stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="transparent"/>
+    </linearGradient>
+    <!-- Sun core gradient -->
+    <radialGradient id="sun" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#00c8ff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#2563eb" stop-opacity="0.6"/>
+    </radialGradient>
+    <!-- Glow filter -->
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Soft glow for circle -->
+    <filter id="softglow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <!-- Clip to upper half for rising sun -->
+    <clipPath id="top-half">
+      <rect x="0" y="0" width="64" height="36"/>
+    </clipPath>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+
+  <!-- Outer ring (faint) -->
+  <circle cx="32" cy="36" r="19"
+    stroke="rgba(0,200,255,0.12)" stroke-width="1"
+    fill="none"/>
+
+  <!-- Atmosphere arc bands — decreasing opacity outward -->
+  <path d="M 14 36 A 18 18 0 0 1 50 36"
+    stroke="rgba(0,200,255,0.07)" stroke-width="6"
+    fill="none" stroke-linecap="round"
+    clip-path="url(#top-half)"/>
+  <path d="M 17 36 A 15 15 0 0 1 47 36"
+    stroke="rgba(0,200,255,0.10)" stroke-width="4"
+    fill="none" stroke-linecap="round"
+    clip-path="url(#top-half)"/>
+  <path d="M 20 36 A 12 12 0 0 1 44 36"
+    stroke="rgba(0,200,255,0.15)" stroke-width="3"
+    fill="none" stroke-linecap="round"
+    clip-path="url(#top-half)"/>
+
+  <!-- Horizon line — full width gradient -->
+  <line x1="5" y1="36" x2="59" y2="36"
+    stroke="url(#line)" stroke-width="1.2"
+    stroke-linecap="round"/>
+
+  <!-- Rising sun — glowing circle cresting the horizon -->
+  <circle cx="32" cy="36" r="9"
+    fill="url(#sun)"
+    filter="url(#softglow)"
+    clip-path="url(#top-half)"/>
+
+  <!-- Sun highlight -->
+  <circle cx="29" cy="30" r="2.5"
+    fill="rgba(255,255,255,0.18)"
+    clip-path="url(#top-half)"/>
+
+  <!-- Horizon line — drawn on top of sun for crisp split -->
+  <line x1="5" y1="36" x2="59" y2="36"
+    stroke="url(#line)" stroke-width="1.2"
+    stroke-linecap="round"/>
+
+  <!-- Glow arc — main accent -->
+  <path d="M 16 36 A 16 16 0 0 1 48 36"
+    stroke="url(#arc)" stroke-width="1.5"
+    fill="none" stroke-linecap="round"
+    filter="url(#glow)"
+    clip-path="url(#top-half)"/>
+
+  <!-- Two small reflection lines below horizon -->
+  <line x1="21" y1="40" x2="43" y2="40"
+    stroke="rgba(0,200,255,0.2)" stroke-width="0.8"
+    stroke-linecap="round"/>
+  <line x1="25" y1="44" x2="39" y2="44"
+    stroke="rgba(0,200,255,0.12)" stroke-width="0.8"
+    stroke-linecap="round"/>
+</svg>
