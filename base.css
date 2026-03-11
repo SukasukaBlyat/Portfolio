@@ -222,6 +222,34 @@ body::before {
   font-style: italic; color: var(--electric);
 }
 
+/* ── CUSTOM CURSOR ── */
+body { cursor: none; }
+
+.cursor-dot {
+  position: fixed;
+  width: 8px;
+  height: 8px;
+  background: #00c8ff;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 8px rgba(0, 200, 255, 0.6);
+}
+
+.cursor-glow {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: 2px solid rgba(0, 200, 255, 0.3);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease-out;
+}
+
 /* ── RESPONSIVE ── */
 @media (max-width: 700px) {
   .site-nav { gap: 20px; padding: 10px 20px; font-size: 0.75rem; }

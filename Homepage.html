@@ -237,6 +237,10 @@
 </head>
 <body>
 
+  <!-- CUSTOM CURSOR -->
+  <div class="cursor-dot" id="cursor-dot"></div>
+  <div class="cursor-glow" id="cursor-glow"></div>
+
   <nav class="site-nav">
     <a href="Homepage.html" class="active">Home</a>
     <a href="Personal.html">Personal</a>
@@ -347,6 +351,38 @@
   </footer>
 
   <script>
+    // ── CUSTOM CURSOR ──
+    const dot = document.getElementById('cursor-dot');
+    const glow = document.getElementById('cursor-glow');
+    let mx = 0, my = 0, gx = 0, gy = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+      dot.style.left = mx + 'px';
+      dot.style.top = my + 'px';
+    });
+
+    (function cursorGlowAnim() {
+      gx += (mx - gx) * 0.12;
+      gy += (my - gy) * 0.12;
+      glow.style.left = gx + 'px';
+      glow.style.top = gy + 'px';
+      requestAnimationFrame(cursorGlowAnim);
+    })();
+
+    document.querySelectorAll('a, button').forEach((el) => {
+      el.addEventListener('mouseenter', () => {
+        glow.style.transform = 'translate(-50%, -50%) scale(1.8)';
+        glow.style.borderColor = 'rgba(0, 200, 255, 0.8)';
+      });
+      el.addEventListener('mouseleave', () => {
+        glow.style.transform = 'translate(-50%, -50%) scale(1)';
+        glow.style.borderColor = 'rgba(0, 200, 255, 0.3)';
+      });
+    });
+
+    // ── LOGOUT BUTTON ──
     document.getElementById('logoutBtn').addEventListener('click', function () {
       // Animate out
       this.textContent = 'Signing out…';
