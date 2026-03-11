@@ -116,6 +116,92 @@ body::before {
   transform: translateX(2px);
 }
 
+/* ══════════════════════════════════════════
+   LIGHTBOX OVERLAY - Messenger-style
+   ══════════════════════════════════════════ */
+
+.lightbox-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.lightbox-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* THE IMAGE - Centered like Messenger */
+.lightbox-img {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+/* Navigation Buttons */
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  z-index: 10001;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox-prev {
+  left: 20px;
+}
+
+.lightbox-next {
+  right: 20px;
+}
+
+/* Close Button */
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease;
+  z-index: 10001;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 /* ── PAGE HERO BANNER ── */
 .page-banner {
   padding: 160px 6% 80px;
@@ -225,74 +311,30 @@ body::before {
 /* ── CUSTOM CURSOR ── */
 body { cursor: none; }
 
-@keyframes amongUsBob {
-  0%, 100% { transform: translate(-50%, -50%); }
-  50% { transform: translate(-50%, -56%); }
-}
-
-@keyframes amongUsRotate {
-  0% { filter: hue-rotate(0deg); }
-  100% { filter: hue-rotate(360deg); }
-}
-
 .cursor-dot {
   position: fixed;
-  width: 24px;
-  height: 28px;
+  width: 12px;
+  height: 12px;
   background: linear-gradient(135deg, #00c8ff 0%, #7dd3fc 100%);
-  border-radius: 50% 50% 45% 45%;
+  border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
   transform: translate(-50%, -50%);
-  box-shadow: 
-    0 0 20px rgba(0, 200, 255, 0.8),
-    inset -3px -3px 6px rgba(0, 0, 0, 0.4),
-    inset 2px 2px 4px rgba(255, 255, 255, 0.3);
-  animation: amongUsBob 2s ease-in-out infinite;
-  overflow: hidden;
-}
-
-.cursor-dot::before {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 10px;
-  background: rgba(0, 20, 40, 0.8);
-  border-radius: 50%;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  box-shadow: 
-    -6px 0 0 rgba(0, 20, 40, 0.7),
-    6px 0 0 rgba(0, 20, 40, 0.7);
-}
-
-.cursor-dot::after {
-  content: '';
-  position: absolute;
-  width: 20px;
-  height: 10px;
-  background: rgba(0, 200, 255, 0.3);
-  border-radius: 50% 50% 0 0;
-  top: 2px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 1px solid rgba(0, 200, 255, 0.5);
+  box-shadow: 0 0 16px rgba(0, 200, 255, 0.8), inset -2px -2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .cursor-glow {
   position: fixed;
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle, rgba(0, 200, 255, 0.25) 0%, rgba(0, 200, 255, 0.08) 60%, transparent 100%);
-  border: 2px solid rgba(0, 200, 255, 0.35);
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, rgba(0, 200, 255, 0.2) 0%, rgba(0, 200, 255, 0.05) 70%, transparent 100%);
+  border: 2px solid rgba(0, 200, 255, 0.4);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9998;
   transform: translate(-50%, -50%);
-  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 0 30px rgba(0, 200, 255, 0.4), inset 0 0 20px rgba(0, 200, 255, 0.1);
-  animation: amongUsRotate 8s linear infinite;
+  transition: all 0.3s ease-out;
+  box-shadow: 0 0 20px rgba(0, 200, 255, 0.3);
 }
 
 /* ── RESPONSIVE ── */
